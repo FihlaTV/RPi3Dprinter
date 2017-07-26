@@ -5,12 +5,17 @@ import java.util.concurrent.TimeUnit
 
 interface MainPresenter : BasePresenter
 
-interface MainView {
+interface LedThing {
     fun switchLed(isOn: Boolean)
     fun isLedOn(): Boolean
 }
 
-class MainPresenterImpl(val view: MainView) : BasePresenterImpl(), MainPresenter {
+interface RelayThing {
+    fun switchRelay(isOn: Boolean)
+    fun isRelayOn(): Boolean
+}
+
+class MainPresenterImpl(val view: SupportedThings) : BasePresenterImpl(), MainPresenter {
     override fun onAttach() {
         super.onAttach()
         startHeartBeating()
@@ -18,17 +23,19 @@ class MainPresenterImpl(val view: MainView) : BasePresenterImpl(), MainPresenter
 
     private fun startHeartBeating() {
         println("Starting heart beating.")
-        Observable
-                .interval(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        val subscribe = Observable
+                .interval(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .doOnNext {
                     val isOn = !view.isLedOn();
 
                     println("Blink: $isOn")
                     view.switchLed(isOn)
+                    view.switchRelay(isOn)
                 }
                 .doOnError { it.printStackTrace() }
                 .doOnCompleted { error("Should never complete") }
                 .subscribe()
+        add(subscribe)
         view.switchLed(true)
     }
 

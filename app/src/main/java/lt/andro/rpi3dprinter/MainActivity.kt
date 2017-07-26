@@ -4,13 +4,14 @@ import android.app.Activity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : Activity(), MainView, MessageView {
+class MainActivity : Activity(), SupportedThings, MessageView {
+
     override fun showMessage(msg: String) {
         mainMessageView.text = msg
     }
 
     private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
-    private val things: ThingsExecutor by lazy {
+    private val things: SupportedThings by lazy {
         if (AndroidThingsUtils().isThingsAvailable())
             ThingsExecutorImpl()
         else
@@ -38,6 +39,14 @@ class MainActivity : Activity(), MainView, MessageView {
 
     override fun isLedOn(): Boolean {
         return things.isLedOn()
+    }
+
+    override fun switchRelay(isOn: Boolean) {
+        things.switchRelay(isOn)
+    }
+
+    override fun isRelayOn(): Boolean {
+        return things.isRelayOn()
     }
 }
 
