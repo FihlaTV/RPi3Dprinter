@@ -6,18 +6,24 @@ import com.google.android.things.pio.PeripheralManagerService
 
 interface ThingsExecutor : MainView
 
-class ThingsExecutorMock : ThingsExecutor {
+class ThingsExecutorMock(val messageView: MessageView) : ThingsExecutor {
     private var value: Boolean = false
 
     override fun switchLed(isOn: Boolean) {
-        val txt = if(isOn) "on" else "off"
-        log { "Led is " + txt }
+        val txt = if (isOn) "on" else "off"
+        val msg = "Led is " + txt;
+        log { msg }
         value = isOn
+        messageView.showMessage(msg)
     }
 
     override fun isLedOn(): Boolean {
         return value
     }
+}
+
+interface MessageView {
+    fun showMessage(msg: String)
 }
 
 class ThingsExecutorImpl : ThingsExecutor {

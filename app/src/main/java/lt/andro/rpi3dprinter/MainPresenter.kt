@@ -1,20 +1,18 @@
 package lt.andro.rpi3dprinter
-
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
 
-
-interface MainPresenter : BasePresenter {
-}
+interface MainPresenter : BasePresenter
 
 interface MainView {
     fun switchLed(isOn: Boolean)
     fun isLedOn(): Boolean
 }
 
-class MainPresenterImpl(val view: MainView) : MainPresenter {
+class MainPresenterImpl(val view: MainView) : BasePresenterImpl(), MainPresenter {
     override fun onAttach() {
+        super.onAttach()
         startHeartBeating()
     }
 
@@ -23,7 +21,7 @@ class MainPresenterImpl(val view: MainView) : MainPresenter {
         Observable
                 .interval(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .doOnNext {
-                    val isOn =!view.isLedOn();
+                    val isOn = !view.isLedOn();
 
                     println("Blink: $isOn")
                     view.switchLed(isOn)
@@ -35,6 +33,7 @@ class MainPresenterImpl(val view: MainView) : MainPresenter {
     }
 
     override fun onDetach() {
+        super.onDetach()
         view.switchLed(false)
     }
 }
