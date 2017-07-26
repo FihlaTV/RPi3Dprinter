@@ -6,7 +6,12 @@ import android.os.Bundle
 class MainActivity : Activity(), MainView {
 
     private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
-    private val things: ThingsExecutor by lazy { ThingsExecutorImpl() }
+    private val things: ThingsExecutor by lazy {
+        if (AndroidThingsUtils().isAvailable())
+            ThingsExecutorImpl()
+        else
+            ThingsExecutorMock()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

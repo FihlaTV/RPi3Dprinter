@@ -23,8 +23,10 @@ class MainPresenterImpl(val view: MainView) : MainPresenter {
         Observable
                 .interval(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .doOnNext {
-                    println("Blink: ${view.isLedOn()}")
-                    view.switchLed(!view.isLedOn())
+                    val isOn =!view.isLedOn();
+
+                    println("Blink: $isOn")
+                    view.switchLed(isOn)
                 }
                 .doOnError { it.printStackTrace() }
                 .doOnCompleted { error("Should never complete") }
