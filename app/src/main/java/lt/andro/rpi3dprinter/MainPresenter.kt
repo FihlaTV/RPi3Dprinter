@@ -24,7 +24,7 @@ class MainPresenterImpl(val view: SupportedThings) : BasePresenterImpl(), MainPr
     private fun startHeartBeating() {
         println("Starting heart beating.")
         val subscribe = Observable
-                .interval(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                .interval(3700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .doOnNext {
                     val isOn = !view.isLedOn();
 

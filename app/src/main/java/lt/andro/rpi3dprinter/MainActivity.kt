@@ -13,7 +13,7 @@ class MainActivity : Activity(), SupportedThings, MessageView {
     private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
     private val things: SupportedThings by lazy {
         if (AndroidThingsUtils().isThingsAvailable())
-            ThingsExecutorImpl()
+            ThingsExecutorImpl(this)
         else
             ThingsExecutorMock(this)
     }
