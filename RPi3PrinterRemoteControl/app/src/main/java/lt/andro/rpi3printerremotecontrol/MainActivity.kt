@@ -2,24 +2,24 @@ package lt.andro.rpi3printerremotecontrol
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Switch
-import lt.andro.rpi3dprinter.MainPresenter
-import lt.andro.rpi3dprinter.MainPresenterImpl
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MainView {
     private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
 
     override fun showPrinter(isOn: Boolean) {
-        (findViewById(R.id.main_printer_switch) as Switch).isChecked = isOn
+        main_printer_switch.isChecked = isOn
     }
 
     override fun showLights(isOn: Boolean) {
-        (findViewById(R.id.main_lights_switch) as Switch).isChecked = isOn
+        main_lights_switch.isChecked = isOn
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        main_lights_switch.setOnClickListener {  _ -> presenter.lightsSwitch(main_lights_switch.isChecked)}
+        main_printer_switch.setOnClickListener {  _ -> presenter.printerSwitch(main_printer_switch.isChecked)}
     }
 
     override fun onResume() {

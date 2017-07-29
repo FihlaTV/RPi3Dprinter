@@ -1,36 +1,41 @@
-package lt.andro.rpi3dprinter
+package lt.andro.rpi3printerremotecontrol
 
 import com.google.firebase.database.*
-import lt.andro.rpi3printerremotecontrol.BasePresenter
-import lt.andro.rpi3printerremotecontrol.BasePresenterImpl
-import lt.andro.rpi3printerremotecontrol.MainView
-import lt.andro.rpi3printerremotecontrol.log
 
-interface MainPresenter : BasePresenter
 
-interface LedThing {
-    fun switchLed(isOn: Boolean)
-    fun isLedOn(): Boolean
-}
-
-interface RelayThing {
-    fun switchRelay(isOn: Boolean)
-    fun isRelayOn(): Boolean
+interface MainPresenter : BasePresenter {
+    fun lightsSwitch(isOn: Boolean)
+    fun printerSwitch(isOn: Boolean)
 }
 
 class MainPresenterImpl(val view: MainView) : BasePresenterImpl(), MainPresenter {
+    override fun lightsSwitch(isOn: Boolean) {
+        log { "On lightsSwitch " + isOn }
+        val update = HashMap<String, Any>()
+        update.put("lights", isOn)
+        getPowerSwitch().updateChildren(update)
+    }
+
+    override fun printerSwitch(isOn: Boolean) {
+        log { "On printerSwitch " + isOn }
+        val update = HashMap<String, Any>()
+        update.put("printer", isOn)
+        getPowerSwitch().updateChildren(update)
+    }
 
     override fun onAttach() {
         super.onAttach()
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-
-        val power = FirebaseDatabase.getInstance().getReference("power");
-        val printer = power.child("printer")
+        log { "onAttach: register printer onDataChanged listener" }
+        val printer = getPowerSwitch().child("printer")
         val listener = object : ValueEventListener {
             override fun onDataChange(data: DataSnapshot?) {
+                log { "onDataChanged " + data }
                 if (data != null) {
                     val typeIndicator = object : GenericTypeIndicator<Boolean>() {}
-                    view.showPrinter(data.getValue(typeIndicator))
+                    val isOn = data.getValue(typeIndicator)
+                    log { "got new printer value from Firebase" + isOn }
+                    view.showPrinter(isOn)
                 }
             }
 
@@ -40,6 +45,8 @@ class MainPresenterImpl(val view: MainView) : BasePresenterImpl(), MainPresenter
         }
         printer.addValueEventListener(listener)
     }
+
+    private fun getPowerSwitch() = FirebaseDatabase.getInstance().getReference("power")
 
     override fun onDetach() {
         super.onDetach()
