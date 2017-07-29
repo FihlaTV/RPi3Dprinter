@@ -54,3 +54,7 @@ freeline_project_description.json
 .DS_Store
 
 .zip
+RPi3PrinterRemoteControl/app/libs/
+RPi3PrinterRemoteControl/app/main.apk.zip
+RPi3PrinterRemoteControl/app/src/main/res/drawable/
+app/src/main/res/drawable/
